@@ -27,6 +27,8 @@ $(document).ready(function () {
 
     const urlRegionID = currentUrl.searchParams.get("regionID");
 
+    const noControls = currentUrl.searchParams.get("noControls");
+
     var map = L.map('map', {
         //maxBounds: L.latLngBounds(L.latLng(-40, -180), L.latLng(85, 153))
         zoomControl: false,
@@ -53,18 +55,20 @@ $(document).ready(function () {
     map.updateMapPath();
     map.getContainer().focus();
 
-    map.addControl(new TitleLabel());
-    map.addControl(new CoordinatesControl());
-    map.addControl(new RegionBaseCoordinatesControl());
-    map.addControl(new LocalCoordinatesControl());
-    map.addControl(L.control.zoom());
-    map.addControl(new PlaneControl());
-    map.addControl(new LocationLookupControl());
-    map.addControl(new MapLabelControl());
-    map.addControl(new CollectionControl({ position: 'topright' }));
-    map.addControl(new RegionLookupControl());
-    map.addControl(new GridControl());
-    map.addControl(new RegionLabelsControl());
+    if (!noControls) {
+        map.addControl(new TitleLabel());
+        map.addControl(new CoordinatesControl());
+        map.addControl(new RegionBaseCoordinatesControl());
+        map.addControl(new LocalCoordinatesControl());
+        map.addControl(L.control.zoom());
+        map.addControl(new PlaneControl());
+        map.addControl(new LocationLookupControl());
+        map.addControl(new CollectionControl({ position: 'topright' }));
+        map.addControl(new RegionLookupControl());
+        map.addControl(new GridControl());
+        map.addControl(new RegionLabelsControl());
+    }
+    map.addControl(new MapLabelControl({ showToggle: !noControls }));
 
     var prevMouseRect, prevMousePos;
     map.on('mousemove', function (e) {
@@ -89,7 +93,7 @@ $(document).ready(function () {
 
         const zoom = map.getZoom();
 
-        window.history.replaceState(null, null, `?centreX=${centrePos.x}&centreY=${centrePos.y}&centreZ=${centrePos.z}&zoom=${zoom}`);
+        window.history.replaceState(null, null, `?centreX=${centrePos.x}&centreY=${centrePos.y}&centreZ=${centrePos.z}&zoom=${zoom}&noControls=${noControls}`);
     };
 
     map.on('move', setUrlParams);

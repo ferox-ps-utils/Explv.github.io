@@ -101,11 +101,27 @@ var MapLabelsCanvas = CanvasLayer.extend({
 
 export var MapLabelControl = L.Control.extend({
     options: {
-        position: 'topleft'
+        position: 'topleft',
+        showToggle: true
     },
 
     onAdd: function (map) {
         map.createPane("map-labels");
+
+        this._mapLabelsCanvas = new MapLabelsCanvas({ pane: "map-labels" });
+        this._map.addLayer(this._mapLabelsCanvas);
+
+        map.on('planeChanged', function () {
+            this._mapLabelsCanvas.drawLayer();
+        }, this);
+
+        if (!this.options.showToggle) {
+            // Return a hidden container so the control does not render any UI.
+            var hiddenContainer = L.DomUtil.create('div');
+            hiddenContainer.style.display = 'none';
+            this._enabled = true;
+            return hiddenContainer;
+        }
 
         var container = L.DomUtil.create('div', 'leaflet-bar leaflet-control noselect');
         container.style.background = 'none';
@@ -121,13 +137,6 @@ export var MapLabelControl = L.Control.extend({
         this._enabled = true;
 
         L.DomEvent.disableClickPropagation(container);
-
-        this._mapLabelsCanvas = new MapLabelsCanvas({ pane: "map-labels" });
-        this._map.addLayer(this._mapLabelsCanvas);
-
-        map.on('planeChanged', function () {
-            this._mapLabelsCanvas.drawLayer();
-        }, this);
 
         return container;
     },
