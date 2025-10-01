@@ -27,7 +27,8 @@ $(document).ready(function () {
 
     const urlRegionID = currentUrl.searchParams.get("regionID");
 
-    const noControls = currentUrl.searchParams.get("noControls");
+    const noControlsParam = currentUrl.searchParams.get("noControls");
+    const noControls = noControlsParam === "true";
 
     var map = L.map('map', {
         //maxBounds: L.latLngBounds(L.latLng(-40, -180), L.latLng(85, 153))
